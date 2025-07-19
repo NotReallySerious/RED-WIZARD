@@ -3,12 +3,16 @@
 
 **Author:** Mrhoodie  
 **Version:** 1.0  
-**Language:** Python  
+**Language:** Python 3.13  
 **Purpose:** Ethical Hacking & Reconnaissance Automation  
 
 ---
 
 <img src=red-wizard.png>
+
+![RW Banner](https://img.shields.io/badge/status-active-brightgreen?style=flat-square)
+![Python](https://img.shields.io/badge/python-3.13-blue?style=flat-square)
+![License](https://img.shields.io/github/license/NotReallySerious/RED-WIZARD?style=flat-square)
 
 ## 🧠 Features
 
