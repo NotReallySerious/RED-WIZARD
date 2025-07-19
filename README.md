@@ -1,5 +1,5 @@
 # RED-WIZARD 🔥🧙‍♂️  
-> Advanced Port Scanner & DNS Enumerator with TOR support
+## Advanced Port Scanner & DNS Enumerator with TOR support
 
 **Author:** Mrhoodie  
 **Version:** 1.0  
@@ -7,6 +7,8 @@
 **Purpose:** Ethical Hacking & Reconnaissance Automation  
 
 ---
+
+<img src=red-wizard.png>
 
 ## 🧠 Features
 
@@ -27,5 +29,9 @@ cd RED-WIZARD
 pip3 install requirements.txt
 python3 red-wizard.py
 ```
+---
+
+## ⚠️⚠️ Disclaimer 
+Use this tool ONLY in servers you allowed to test. I am not responsible for any illegal consequences that happened because of your irresponsible actions with this tool.
 
 
