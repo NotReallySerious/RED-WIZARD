@@ -22,12 +22,20 @@
 
 ---
 
+## Prerequisites
+- **TOR**
+- **Python3 & pip3** (Better use the latest version)
+
 ## 🛠️ Installation steps
 ```bash
 git clone https://gihub.com/NotReallySerious/RED-WIZARD
 cd RED-WIZARD
 pip3 install requirements.txt
 python3 red-wizard.py
+```
+## IMPORTANT For linux users
+```bash
+sudo apt install tor
 ```
 ---
 
