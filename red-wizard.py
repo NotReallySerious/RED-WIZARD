@@ -6,40 +6,39 @@ import dns.zone
 import dns.query
 import pyfiglet
 from concurrent.futures import ThreadPoolExecutor
-from colorama import Fore, init
+from colorama import Fore, Style, init
 import os
-import sys
+import requests
 
 init(autoreset=True)
 
-TOR_PROXY = ("127.0.0.1", 9050)
+def enable_tor_proxy():
+    socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 9050)
+    socket.socket = socks.socksocket
 
-def is_tor_working():
+def check_tor_ip():
     try:
-        s = socks.socksocket()
-        s.set_proxy(socks.SOCKS5, *TOR_PROXY)
-        s.settimeout(5)
-        s.connect(("check.torproject.org", 80))
-        s.send(b"GET / HTTP/1.1\r\nHost: check.torproject.org\r\n\r\n")
-        banner = s.recv(2048).decode(errors="ignore")
-        s.close()
-        return "Congratulations. This browser is configured to use Tor" in banner
-    except:
-        return False
+        proxies = {
+            'http': 'socks5h://127.0.0.1:9050',
+            'https': 'socks5h://127.0.0.1:9050'
+        }
+        res = requests.get("http://httpbin.org/ip", proxies=proxies, timeout=10)
+        print(f"{Fore.GREEN}[+] TOR IP Detected: {res.json()['origin']}")
+    except Exception as e:
+        print(f"{Fore.RED}[-] Could not connect through TOR: {e}")
 
-def scan_port(resolved_ip, port, use_tor=False):
+
+def scan_port(resolved_ip, port):
     try:
-        s = socks.socksocket() if use_tor else socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        if use_tor:
-            s.set_proxy(socks.SOCKS5, *TOR_PROXY)
-        s.settimeout(5)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(1)
         result = s.connect_ex((resolved_ip, port))
 
         if result == 0:
             banner = "No banner"
             try:
                 if port == 80:
-                    s.send(f"GET / HTTP/1.1\r\nHost: {resolved_ip}\r\n\r\n".encode())
+                    s.send("GET / HTTP/1.1\r\nHost: {}\r\n\r\n".format(resolved_ip).encode())
                     banner = s.recv(1024).decode(errors="ignore").strip()
                 elif port == 443:
                     context = ssl.create_default_context()
@@ -55,11 +54,10 @@ def scan_port(resolved_ip, port, use_tor=False):
 
             print(f"{Fore.GREEN}[+] Port {port} is OPEN. Version: {banner}")
         s.close()
-
     except Exception:
         pass
 
-def port_scan(use_tor=False):
+def port_scan():
     while True:
         ip = input("Enter the IP or domain: ").strip()
         try:
@@ -79,12 +77,12 @@ def port_scan(use_tor=False):
         except ValueError:
             print("Invalid input.")
 
-    method = "via Tor" if use_tor else "directly"
-    print(f"\n{Fore.RED}[+] Starting port scan on {resolved_ip} ({method}) from port 1 to {count_port}\n")
+    print(f"\n{Fore.RED}[+] Starting scan on {resolved_ip} (ports 1 to {count_port})...\n")
 
     with ThreadPoolExecutor(max_workers=100) as executor:
         for port in range(1, count_port + 1):
-            executor.submit(scan_port, resolved_ip, port, use_tor)
+            executor.submit(scan_port, resolved_ip, port)
+
 
 def dns_enum(domain):
     print(f"{Fore.CYAN}[+] Starting DNS Enumeration for: {domain}")
@@ -127,7 +125,8 @@ def dns_enum(domain):
     except Exception as e:
         print(f"{Fore.YELLOW}  [-] Failed to get NS records: {e}")
 
-def dns_port_scan(use_tor=False):
+
+def dns_port_scan():
     while True:
         ip = input("Enter the IP or domain: ").strip()
         try:
@@ -136,6 +135,7 @@ def dns_port_scan(use_tor=False):
         except socket.gaierror:
             print("IP or domain not found. Try again.")
 
+    dns_enum(ip)
     while True:
         try:
             ports = input("Enter the number of ports you want to scan (default 1000): ").strip()
@@ -147,28 +147,38 @@ def dns_port_scan(use_tor=False):
         except ValueError:
             print("Invalid input.")
 
-    method = "via Tor" if use_tor else "directly"
-    print(f"\n{Fore.RED}[+] Starting port scan on {resolved_ip} ({method})...\n")
+    print(f"\n{Fore.RED}[+] Starting scan on {resolved_ip} (ports 1 to {count_port})...\n")
 
     with ThreadPoolExecutor(max_workers=100) as executor:
         for port in range(1, count_port + 1):
-            executor.submit(scan_port, resolved_ip, port, use_tor)
+            executor.submit(scan_port, resolved_ip, port)
 
-    print(f"\n{Fore.MAGENTA}[+] Running DNS Enumeration for: {ip}\n")
+
+def port_scan_tor():
+    enable_tor_proxy()
+    check_tor_ip()
+    port_scan()
+
+def dns_enum_port_scan_tor():
+    enable_tor_proxy()
+    check_tor_ip()
+    ip = input("Enter the domain name: ").strip()
     dns_enum(ip)
+    port_scan()
+
 
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
-    banner = pyfiglet.figlet_format("RED-WIZARD", font="cyberlarge")
+    banner = pyfiglet.figlet_format("RED-WIZARD", font="epic")
     print(Fore.RED + banner)
     print(Fore.RED + "Author: Mrhoodie")
-    print(Fore.RED + "Github: https://github.com/NotReallySerious")
+    print(Fore.RED + "Version: 1.0")
     print(Fore.RED + "-" * 60)
     print(Fore.RED + "[1] Port Scan")
     print(Fore.RED + "[2] DNS Enumeration")
     print(Fore.RED + "[3] DNS Enumeration + Port Scan")
-    print(Fore.RED + "[4] Port Scan via Tor network")
-    print(Fore.RED + "[5] Port Scan + DNS Enumeration via Tor network")
+    print(Fore.RED + "[4] Port Scan via TOR network")
+    print(Fore.RED + "[5] DNS Enumeration + Port Scan via TOR network")
     print(Fore.RED + "[6] Exit")
 
     while True:
@@ -181,20 +191,14 @@ def main():
         elif choice == "3":
             dns_port_scan()
         elif choice == "4":
-            if is_tor_working():
-                port_scan(use_tor=True)
-            else:
-                print(f"{Fore.RED}[!] Tor is not running. Please start it with: sudo service tor start")
+            port_scan_tor()
         elif choice == "5":
-            if is_tor_working():
-                dns_port_scan(use_tor=True)
-            else:
-                print(f"{Fore.RED}[!] Tor is not running. Please start it with: sudo service tor start")
+            dns_enum_port_scan_tor()
         elif choice == "6":
             print("Exiting...")
-            sys.exit()
+            break
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid choice. Try again.")
 
 if __name__ == "__main__":
     main()
