@@ -19,7 +19,7 @@
 - ⚡ Multi-threaded **TCP Port Scanning**
 - 🌐 Full **DNS Enumeration**:
   - A, AAAA, MX, TXT, SOA, NS, CNAME
-  - Subdomain brute-forcing
+  - Mini Subdomain brute-forcing
   - Zone transfer testing
 - 🕵️‍♂️ **TOR Network Support** for anonymous port scans
 - 🧩 Clean menu UI with ASCII art banner
@@ -29,17 +29,22 @@
 ## Prerequisites
 - **TOR**
 - **Python3 & pip3** (Better use the latest version)
+- **Python virtual environment &rarr; to install the python library depedencies and run the tool**
 
 ## 🛠️ Installation steps
 ```bash
 git clone https://gihub.com/NotReallySerious/RED-WIZARD
 cd RED-WIZARD
-pip3 install requirements.txt
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+sudo service tor start
 python3 red-wizard.py
 ```
 ## IMPORTANT For linux users
 ```bash
 sudo apt install tor
+sudo service tor start
 ```
 ---
 
