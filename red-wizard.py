@@ -169,16 +169,16 @@ def dns_enum_port_scan_tor():
 
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
-    banner = pyfiglet.figlet_format("RED-WIZARD", font="epic")
+    banner = pyfiglet.figlet_format("RED-WIZARD", font="cyberlarge")
     print(Fore.RED + banner)
     print(Fore.RED + "Author: Mrhoodie")
-    print(Fore.RED + "Version: 1.0")
+    print(Fore.RED + "Github: https://github.com/NotReallySerious")
     print(Fore.RED + "-" * 60)
     print(Fore.RED + "[1] Port Scan")
     print(Fore.RED + "[2] DNS Enumeration")
     print(Fore.RED + "[3] DNS Enumeration + Port Scan")
-    print(Fore.RED + "[4] Port Scan via TOR network")
-    print(Fore.RED + "[5] DNS Enumeration + Port Scan via TOR network")
+    print(Fore.RED + "[4] Port Scan via Tor network")
+    print(Fore.RED + "[5] Port Scan + DNS Enumeration via Tor network")
     print(Fore.RED + "[6] Exit")
 
     while True:
