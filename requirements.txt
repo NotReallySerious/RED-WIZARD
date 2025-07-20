@@ -2,3 +2,4 @@ colorama
 pyfiglet
 dnspython
 pysocks
+requests
